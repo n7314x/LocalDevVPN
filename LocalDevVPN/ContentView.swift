@@ -84,7 +84,9 @@ class TunnelManager: ObservableObject {
         }
 
         proto.includeAllNetworks = false
-        proto.enforceRoutes = true
+        if #available(iOS 14.2, *) {
+            proto.enforceRoutes = true
+        }
 
         var providerConfiguration = proto.providerConfiguration ?? [:]
         providerConfiguration[TunnelConstants.ifaceIPConfigurationKey] = tunnelIfaceIP
@@ -300,7 +302,9 @@ class TunnelManager: ObservableObject {
             proto.providerBundleIdentifier = self.tunnelBundleId
             proto.serverAddress = "LocalDevVPN's Local Network Tunnel"
             proto.includeAllNetworks = false
-            proto.enforceRoutes = true
+            if #available(iOS 14.2, *) {
+                proto.enforceRoutes = true
+            }
             proto.providerConfiguration = [
                 TunnelConstants.ifaceIPConfigurationKey: self.tunnelIfaceIP,
                 TunnelConstants.peerIPConfigurationKey: self.tunnelPeerIP,
@@ -624,7 +628,9 @@ class TunnelManager: ObservableObject {
             manager.isOnDemandEnabled = true
             if let proto = manager.protocolConfiguration as? NETunnelProviderProtocol {
                 proto.includeAllNetworks = false
-                proto.enforceRoutes = true
+                if #available(iOS 14.2, *) {
+                    proto.enforceRoutes = true
+                }
                 manager.protocolConfiguration = proto
                 VPNLogger.shared.log("Enforcing LocalDevVPN included routes")
             }
