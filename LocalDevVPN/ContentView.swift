@@ -83,6 +83,9 @@ class TunnelManager: ObservableObject {
             return false
         }
 
+        proto.includeAllNetworks = false
+        proto.enforceRoutes = true
+
         var providerConfiguration = proto.providerConfiguration ?? [:]
         providerConfiguration[TunnelConstants.ifaceIPConfigurationKey] = tunnelIfaceIP
         providerConfiguration[TunnelConstants.peerIPConfigurationKey] = tunnelPeerIP
@@ -296,6 +299,8 @@ class TunnelManager: ObservableObject {
             let proto = NETunnelProviderProtocol()
             proto.providerBundleIdentifier = self.tunnelBundleId
             proto.serverAddress = "LocalDevVPN's Local Network Tunnel"
+            proto.includeAllNetworks = false
+            proto.enforceRoutes = true
             proto.providerConfiguration = [
                 TunnelConstants.ifaceIPConfigurationKey: self.tunnelIfaceIP,
                 TunnelConstants.peerIPConfigurationKey: self.tunnelPeerIP,
@@ -617,8 +622,14 @@ class TunnelManager: ObservableObject {
             )]
             manager.onDemandRules = [onDemandRule]
             manager.isOnDemandEnabled = true
+            if let proto = manager.protocolConfiguration as? NETunnelProviderProtocol {
+                proto.includeAllNetworks = false
+                proto.enforceRoutes = true
+                manager.protocolConfiguration = proto
+                VPNLogger.shared.log("Enforcing LocalDevVPN included routes")
+            }
+
             manager.isEnabled = true
-            
             manager.saveToPreferences { [weak self] error in
                 guard self != nil else { return }
                 if let error = error {
